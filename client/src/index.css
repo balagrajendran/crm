@@ -1,0 +1,58 @@
+/* === App shell layout for desktop === */
+:root {
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 72px;
+  --sb-bg: #ffffff;
+  --sb-border: #e9ecef;
+  --sb-link: #212529;
+  --sb-link-active-bg: #0d6efd;
+  --sb-link-active: #ffffff;
+}
+
+.crm-sidebar {
+  position: fixed;
+  top: 56px;               /* navbar height */
+  left: 0;
+  width: var(--sidebar-w);
+  height: calc(100vh - 56px);
+  background: var(--sb-bg);
+  border-right: 1px solid var(--sb-border);
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1029; /* below navbar */
+}
+.crm-sidebar.collapsed { width: var(--sidebar-w-collapsed); }
+
+.crm-sidebar__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 6px 10px 6px; border-bottom: 1px solid var(--sb-border);
+}
+.crm-sidebar .brand { font-weight: 600; color: #6c757d }
+
+.crm-sidebar__nav { padding-top: 8px; }
+
+.crm-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; color: var(--sb-link);
+  margin: 2px 4px; font-weight: 500;
+}
+.crm-link:hover { background: #f1f3f5; color: var(--sb-link); }
+.crm-link.active { background: var(--sb-link-active-bg); color: var(--sb-link-active) }
+.crm-link.active .icon { filter: brightness(10); }
+
+.crm-link .icon { width: 22px; text-align: center; }
+.crm-sidebar.collapsed .label { display: none; }
+
+.crm-main { padding-top: 56px; }
+.crm-main.is-open { margin-left: var(--sidebar-w); }
+.crm-main.is-collapsed { margin-left: var(--sidebar-w-collapsed); }
+
+/* Mobile drawer links reuse the same visual language */
+.crm-link.mobile { border-radius: 8px; margin: 4px 6px; }
+
+body { background: #f8f9fa; }
+.card { border-radius: 14px; }
+.btn { border-radius: 10px; }
+.form-control, .form-select { border-radius: 10px; }

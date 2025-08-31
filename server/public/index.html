@@ -1,0 +1,90 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CRM API – Login</title>
+    <style>
+      :root{--c:#0d6efd;} *{box-sizing:border-box} body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      margin:0; background:#f6f7fb; color:#222;}
+      .wrap{max-width:420px; margin:8vh auto; background:#fff; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.08); overflow:hidden}
+      .head{background:#111827; color:#fff; padding:16px 20px; font-weight:600}
+      form{padding:20px; display:grid; gap:12px}
+      input{width:100%; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; outline:0}
+      button{background:var(--c); color:#fff; border:0; padding:12px 14px; border-radius:10px; cursor:pointer; font-weight:600}
+      .muted{color:#6b7280; font-size:12px}
+      .row{display:grid; gap:8px}
+      .card{margin:18px 20px 24px; padding:16px; border:1px solid #e5e7eb; border-radius:12px; background:#fff}
+      pre{background:#0b1020; color:#d1e8ff; padding:12px; border-radius:10px; overflow:auto}
+      .err{color:#b91c1c; font-weight:600}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="head">CRM API Login (Node + MySQL + RBAC)</div>
+      <form id="f">
+        <div class="row">
+          <label>Email</label>
+          <input id="email" type="email" value="admin@example.com" required />
+        </div>
+        <div class="row">
+          <label>Password</label>
+          <input id="password" type="password" value="admin123" required />
+        </div>
+        <button type="submit">Sign in</button>
+        <div class="muted">A default admin is seeded on first run.</div>
+        <div id="msg" class="err"></div>
+      </form>
+      <div class="card">
+        <div class="muted">Token</div>
+        <pre id="tok">(not signed in)</pre>
+        <div class="muted">Role</div>
+        <pre id="role">—</pre>
+        <button id="dashBtn" style="margin-top:8px">Call /api/dashboard</button>
+        <pre id="dashOut"></pre>
+      </div>
+    </div>
+
+    <script>
+      const tokEl = document.getElementById('tok');
+      const roleEl = document.getElementById('role');
+      const dashOut = document.getElementById('dashOut');
+      const msg = document.getElementById('msg');
+
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user')||'null');
+      if (token) tokEl.textContent = token.slice(0,42)+'…';
+      if (user) roleEl.textContent = user.role;
+
+      document.getElementById('f').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.textContent = '';
+        dashOut.textContent = '';
+        try {
+          const r = await fetch('/api/auth/login', {
+            method:'POST',
+            headers:{'content-type':'application/json'},
+            body: JSON.stringify({ email: email.value, password: password.value })
+          });
+          const data = await r.json();
+          if (!r.ok) throw new Error(data?.error || r.statusText);
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          tokEl.textContent = data.token.slice(0,42)+'…';
+          roleEl.textContent = data.user?.role || '—';
+        } catch (err) {
+          msg.textContent = err.message || String(err);
+        }
+      });
+
+      document.getElementById('dashBtn').addEventListener('click', async () => {
+        const t = localStorage.getItem('token');
+        if (!t) { dashOut.textContent = 'Login first.'; return; }
+        const r = await fetch('/api/dashboard', { headers:{ authorization: 'Bearer '+t }});
+        const data = await r.json();
+        dashOut.textContent = JSON.stringify(data, null, 2);
+      });
+    </script>
+  </body>
+</html>
