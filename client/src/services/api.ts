@@ -15,6 +15,11 @@ const baseQuery = fetchBaseQuery({
 
 type Pagination<T> = { data: T[]; total: number };
 
+export interface SupplierSuggestion {
+  code: string;
+  name?: string;
+}
+
 export interface Company {
   id: number;
   name: string;
@@ -518,6 +523,17 @@ export const api = createApi({
         { type: "GRN", id: "LIST" },
       ],
     }),
+
+    searchSuppliers: builder.query<
+      { data: SupplierSuggestion[] },
+      { q: string; limit?: number }
+    >({
+      query: ({ q, limit = 10 }) => ({
+        url: "/api/sap/suppliers",
+        params: { q, limit },
+      }),
+      keepUnusedDataFor: 30,
+    }),
   }),
 });
 
@@ -556,4 +572,5 @@ export const {
   useCreateGRNMutation,
   useDeleteGRNMutation,
   useTransitionGRNMutation,
+  useLazySearchSuppliersQuery,
 } = api;

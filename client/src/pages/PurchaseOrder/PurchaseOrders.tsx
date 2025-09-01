@@ -22,7 +22,7 @@ import {
   api,
 } from "../../services/api";
 import { z } from "zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ModalForm from "../../components/ModalForm";
 import { useAppDispatch } from "../../app/hooks";
@@ -31,6 +31,7 @@ import { BsChevronDown, BsChevronRight } from "react-icons/bs";
 import ReceivePO from "../../components/ReceivePO";
 import { exportPurchaseOrderPDF } from "../../utils/poPdf";
 import siteLogo from '../../assets/logo.png'
+import SupplierAutocompleteMUI from '../../components/SupplierAutocompleteMUI';
 
 /* ----------------------------- Validation schema ---------------------------- */
 
@@ -150,7 +151,7 @@ export default function PurchaseOrders() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    resolver: zodResolver(poSchema),
+    resolver: zodResolver(poSchema) as any, // Explicitly cast to any to resolve type mismatch
     defaultValues: {
       vendor: "",
       orderDate: "",
@@ -578,7 +579,11 @@ export default function PurchaseOrders() {
                         <Button
                           size="sm"
                           variant="outline-secondary"
-                          onClick={() => exportPurchaseOrderPDF(po, { logoDataUrl: logo ?? undefined })}
+                          onClick={() =>
+                            exportPurchaseOrderPDF(po, {
+                              logoDataUrl: logo ?? undefined,
+                            })
+                          }
                         >
                           PDF
                         </Button>
@@ -707,7 +712,7 @@ export default function PurchaseOrders() {
               </Form.Group>
             </Col>
 
-            <Col md={6}>
+            {/* <Col md={6}>
               <Form.Group>
                 <Form.Label>Supplier Code</Form.Label>
                 <Form.Control
@@ -718,6 +723,19 @@ export default function PurchaseOrders() {
                   {errors.vendor?.message}
                 </Form.Control.Feedback>
               </Form.Group>
+            </Col> */}
+
+            <Col md={6}>
+            <Form.Label>Supplier Code</Form.Label>
+              <SupplierAutocompleteMUI
+                control={control}
+                name="vendor"
+                label="Supplier Code"
+                // onPicked={(opt) => {
+                //   // Optional: also set vendor name from SAP result:
+                //   // setValue('vendor', opt.name || '');
+                // }}
+              />
             </Col>
 
             {/* <Col md={3}>

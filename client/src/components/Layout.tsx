@@ -46,6 +46,7 @@ export default function Layout() {
       JSON.parse(localStorage.getItem("user") || "null") as {
         name?: string;
         email?: string;
+        role?: Role;
       } | null,
     [loc.pathname]
   );
@@ -60,8 +61,8 @@ export default function Layout() {
     // { to: '/deals-board', label: 'Deals Board', icon: '🗂️' },
     // { to: '/activities', label: 'Activities',   icon: '✅' },
     { to: "/purchase-orders", label: "Purchase Orders", icon: "🧾" },
-    { to: "/invoices", label: "Invoices", icon: "🧾" },
-    { to: "/grns", label: "GRNs", icon: "🧾" },
+    { to: "/invoices", label: "Invoices", icon: "📄" }, // changed icon
+    { to: "/grns", label: "GRNs", icon: "📦" },
   ];
 
   const filtered = links.filter((l) => {
@@ -95,14 +96,14 @@ export default function Layout() {
       {isMdUp && (
         <aside className={`crm-sidebar ${collapsed ? "collapsed" : ""}`}>
           <div className="crm-sidebar__head">
-            <span className="brand">Menu</span>
+            <span className="brand">{collapsed ? "" : "Menu"}</span>
             <Button
               variant="outline-secondary"
               size="sm"
               onClick={() => setCollapsed((v) => !v)}
               aria-label="Collapse sidebar"
             >
-              {collapsed ? "›" : "‹"}
+              ☰{/* {collapsed ? "›" : "‹"} */}
             </Button>
           </div>
           <Nav className="flex-column crm-sidebar__nav">
@@ -112,9 +113,7 @@ export default function Layout() {
                 as={NavLink}
                 to={l.to}
                 end={l.to === "/"}
-                className={({ isActive }) =>
-                  `crm-link ${isActive ? "active" : ""}`
-                }
+                className="crm-link"
               >
                 <span className="icon">{l.icon}</span>
                 <span className="label">{l.label}</span>
@@ -143,9 +142,7 @@ export default function Layout() {
                   as={NavLink}
                   to={l.to}
                   end={l.to === "/"}
-                  className={({ isActive }) =>
-                    `crm-link mobile ${isActive ? "active" : ""}`
-                  }
+                  className="crm-link mobile"
                 >
                   <span className="icon">{l.icon}</span>
                   <span className="label">{l.label}</span>

@@ -14,6 +14,7 @@ import bcrypt from 'bcryptjs'
 import purchaseOrders from './routes/purchaseOrders.js'
 import invoices from './routes/invoices.js'
 import grns from './routes/grns.js'
+import sapRoutes from './routes/sap.js';
 
 const app = express()
 app.use(cors({ origin:true, credentials:true }))
@@ -34,6 +35,8 @@ app.use('/api/activities', activities)
 app.use('/api/purchase-orders', purchaseOrders)
 app.use('/api/invoices', invoices)
 app.use('/api/grns', grns)
+app.use('/api/sap', sapRoutes);
+
 
 const PORT = process.env.PORT || 4000
 
